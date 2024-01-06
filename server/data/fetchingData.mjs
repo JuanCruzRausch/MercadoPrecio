@@ -1,22 +1,49 @@
+// To use this code i used the following command
+// "node --experimental-modules fetchingData.mjs"
+// This code extracts 10 products of each category from Mercado Libre
 import fs from 'fs/promises';
 import fetch from 'node-fetch';
 
 async function getCategories() {
-  const apiUrlCategories = 'https://api.mercadolibre.com/sites/MLA/categories';
+  const categoriesApiUrl = 'https://api.mercadolibre.com/sites/MLA/categories';
 
   try {
-    const responseCategories = await fetch(apiUrlCategories);
+    const categoriesResponse = await fetch(categoriesApiUrl);
 
-    if (!responseCategories.ok) {
+    if (!categoriesResponse.ok) {
       throw new Error(
-        `Error in the API call for categories: ${responseCategories.status}`,
+        `Error calling the categories API: ${categoriesResponse.status}`,
       );
     }
 
-    const dataCategories = await responseCategories.json();
-    return dataCategories;
+    const categoriesData = await categoriesResponse.json();
+    return categoriesData;
   } catch (error) {
     console.error('Error fetching categories:', error);
+    return null;
+  }
+}
+
+async function getImageUrl(thumbnailId) {
+  const imageUrlApi = `https://api.mercadolibre.com/pictures/${thumbnailId}`;
+
+  try {
+    const imageResponse = await fetch(imageUrlApi);
+
+    if (!imageResponse.ok) {
+      throw new Error(`Error calling the images API: ${imageResponse.status}`);
+    }
+
+    const imageData = await imageResponse.json();
+    const firstVariation = imageData.variations[0];
+
+    if (!firstVariation) {
+      throw new Error(`The image has no variations.`);
+    }
+
+    return firstVariation.secure_url;
+  } catch (error) {
+    console.error(`Error fetching the image URL for ${thumbnailId}:`, error);
     return null;
   }
 }
@@ -29,7 +56,7 @@ async function fetchDataByCategory(category) {
 
     if (!response.ok) {
       throw new Error(
-        `Error in the API call for the category ${category.name}: ${response.status}`,
+        `Error calling the API for category ${category.name}: ${response.status}`,
       );
     }
 
@@ -38,7 +65,7 @@ async function fetchDataByCategory(category) {
     // Get only the first 10 results
     const results = data.results.slice(0, 10);
 
-    // Extract only the attributes we need
+    // Extract only the necessary attributes
     const products = [];
 
     for (const product of results) {
@@ -50,10 +77,13 @@ async function fetchDataByCategory(category) {
         continue; // Skip to the next iteration of the loop
       }
 
+      const thumbnailId = product.thumbnail_id;
+      const imageUrl = thumbnailId ? await getImageUrl(thumbnailId) : null;
+
       products.push({
         name: product.title,
         condition: product.condition,
-        imageUrl: product.thumbnail,
+        imageUrl: imageUrl, // Use the obtained image URL
         price: product.price,
         category: category.name,
       });
