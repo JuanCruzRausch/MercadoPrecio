@@ -1,14 +1,25 @@
 const Product = require('../models/productModel');
+const catchAsync = require('../utils/catchAsync');
 
-exports.getAllProducts = async (req, res, next) => {
+exports.getAllProducts = catchAsync(async (req, res, next) => {
+  const products = await Product.find();
+
+  res.status(200).json({
+    status: 'success',
+    results: products.length,
+    data: {
+      products,
+    },
+  });
+});
+
+exports.getRandomProduct = async (req, res, next) => {
   try {
-    const products = await Product.find();
-
+    const product = await Product.aggregate([{ $sample: { size: 1 } }]);
     res.status(200).json({
       status: 'success',
-      results: products.length,
       data: {
-        products,
+        product,
       },
     });
   } catch (error) {
