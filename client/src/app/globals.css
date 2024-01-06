@@ -25,3 +25,16 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.bg-navbar {
+  background-color: rgb(248, 230, 53);
+}
+
+.link-text {
+  color: rgb(37, 36, 5);
+}
+
+.footer {
+  border-top: 3px solid rgb(248, 230, 53);
+  color: rgb(76, 76, 76);
+}
