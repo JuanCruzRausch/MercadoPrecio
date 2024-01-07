@@ -3,14 +3,16 @@ import Image from 'next/image';
 
 function Card({ product, second }) {
   return (
-    <div className="card border bg-white rounded-md overflow-hidden shadow-md m-4 h-500 w-250 flex flex-col">
-      <div className="h-60">
+    <div
+      className="card border bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col"
+      style={{ width: '300px', height: '450px' }}
+    >
+      <div className="h-60 flex justify-center items-center">
         <Image
           src={product?.imageUrl}
           alt={product?.name}
           width={200}
-          height={200}
-          className=" object-contain w-full h-full"
+          height={250}
         />
       </div>
       <div className="p-4 flex-grow">

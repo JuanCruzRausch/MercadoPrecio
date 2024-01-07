@@ -1,4 +1,4 @@
-import { FaLinkedin, FaGithub, FaBriefcase } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaBriefcase } from 'react-icons/fa';
 
 function Footer() {
   return (
@@ -17,9 +17,7 @@ function Footer() {
           </p>
         </div>
         <div className="w-full flex items-center justify-center sm:w-1/3 lg:w-1/3 mb-3 text-center">
-          <p className="text-xs">
-            &copy; 2024 Juan Cruz Rausch. Todos los derechos reservados.
-          </p>
+          <p className="text-xs">Soporte de Juan Cruz Rausch 👨🏼‍💻</p>
         </div>
         <div className="w-full sm:w-1/3 lg:w-1/3 mb-3">
           <h3 className="border-b-2 border-primary w-4/5 text-base mb-4">
