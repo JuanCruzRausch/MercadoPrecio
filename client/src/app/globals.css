@@ -28,9 +28,6 @@ body {
 
 .bg-navbar {
   background-color: rgb(248, 230, 53);
-}
-
-.link-text {
   color: rgb(37, 36, 5);
 }
 
@@ -40,11 +37,52 @@ body {
 }
 
 .button-game-green {
-  background-color: rgb(22, 151, 63);
-  border: 2px solid rgb(12, 0, 113);
+  color: rgb(22, 151, 63);
+  transition: ease 0.2s;
+  border-width: 2px 2px 5px 2px;
+  border-color: transparent;
 }
 
 .button-game-red {
+  transition: ease 0.2s;
+  color: rgb(231, 0, 8);
+  border-width: 2px 2px 5px 2px;
+  border-color: transparent;
+}
+
+.button-game-green:hover,
+.hover-button-game-green:hover .button-game-green {
+  background-color: rgb(22, 151, 63);
+  color: #ffffff;
+  border-style: solid;
+  border-color: rgb(12, 0, 113);
+}
+
+.button-game-red:hover,
+.hover-button-game-red:hover .button-game-red {
   background-color: rgb(231, 0, 8);
-  border: 2px solid rgb(12, 0, 113);
+  color: #ffffff;
+  border-style: solid;
+  border-color: rgb(12, 0, 113);
+}
+
+.transition-bg-vs {
+  transition:
+    background-color 1s ease,
+    border-radius 1s ease,
+    color 1s ease;
+}
+
+.success {
+  transition: ease;
+  background-color: rgb(22, 151, 63);
+  color: #ffffff;
+  border-radius: 100%;
+}
+
+.fail {
+  transition: ease;
+  background-color: rgb(231, 0, 8);
+  color: #ffffff;
+  border-radius: 100%;
 }

@@ -28,7 +28,7 @@ const Navbar = () => {
   const pathName = usePathname();
   console.log(pathName);
   return (
-    <nav className="bg-navbar p-1 text-white">
+    <nav className="bg-navbar p-1 text-white shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center text-center">
           <Image src={logo} alt="Logo de la app" width={75} height={50} />

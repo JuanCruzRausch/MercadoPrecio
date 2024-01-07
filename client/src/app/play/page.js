@@ -4,59 +4,95 @@ import GameButton from '@/components/GameButton/GameButton';
 import React, { useState, useEffect } from 'react';
 
 export default function Page() {
-  const [currentProduct, setCurrentProduct] = useState(null);
-  const [nextProduct, setNextProduct] = useState(null);
+  const [products, setProducts] = useState({ current: null, next: null });
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRandomProduct = async () => {
+    const handleFetchError = (error) => {
+      console.error(error.message);
+    };
+
+    const fetchRandomProductInit = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8080/product/rand');
-        if (!response.ok) {
+        const [response1, response2] = await Promise.all([
+          fetch('http://localhost:8080/product/rand'),
+          fetch('http://localhost:8080/product/rand'),
+        ]);
+
+        if (!response1.ok || !response2.ok) {
           throw new Error('Error al obtener el producto aleatorio');
         }
 
-        const data = await response.json();
-        setCurrentProduct(nextProduct);
-        setNextProduct(data.data.product[0]);
+        const [data1, data2] = await Promise.all([
+          response1.json(),
+          response2.json(),
+        ]);
+        setProducts({
+          current: data1.data.product[0],
+          next: data2.data.product[0],
+        });
         setLoading(false);
       } catch (error) {
-        console.error(error.message);
+        handleFetchError(error);
       }
     };
 
-    fetchRandomProduct();
+    fetchRandomProductInit();
   }, []);
-
-  const handleGuess = (isHigher) => {
-    fetchRandomProduct();
-
-    if (isHigher && nextProduct?.price > currentProduct?.price) {
-      setScore((prevScore) => prevScore + 1);
-    } else if (!isHigher && nextProduct?.price < currentProduct?.price) {
-      setScore((prevScore) => prevScore + 1);
-    } else {
-      alert(`¡Fin del juego! Tu puntuación final es: ${score}`);
-      setScore(0);
-    }
-  };
 
   const fetchRandomProduct = async () => {
     try {
       setLoading(true);
       const response = await fetch('http://localhost:8080/product/rand');
+
       if (!response.ok) {
         throw new Error('Error al obtener el producto aleatorio');
       }
 
       const data = await response.json();
-      setCurrentProduct(nextProduct);
-      setNextProduct(data.data.product[0]);
+      setProducts({ current: products.next, next: data.data.product[0] });
       setLoading(false);
     } catch (error) {
-      console.error(error.message);
+      handleFetchError(error);
+    }
+  };
+  const handleGuess = (isHigher) => {
+    const { price: nextPrice } = products.next || {};
+    const { price: currentPrice } = products.current || {};
+
+    if (
+      (isHigher && nextPrice > currentPrice) ||
+      (!isHigher && nextPrice < currentPrice)
+    ) {
+      setScore((prevScore) => prevScore + 1);
+      handleVSColorChange('success');
+    } else {
+      setScore(0);
+      handleVSColorChange('fail');
+    }
+  };
+
+  const handleVSColorChange = (colorClass) => {
+    const vsDiv = document.getElementById('vsDiv');
+    console.log(vsDiv);
+    if (vsDiv) {
+      vsDiv.classList.remove(
+        'bg-navbar',
+        'transition-bg-vs',
+        'success',
+        'fail',
+      );
+      vsDiv.classList.add('transition-bg-vs', colorClass);
+
+      setTimeout(() => {
+        vsDiv.classList.remove(colorClass);
+        vsDiv.classList.add('bg-navbar');
+        setTimeout(() => {
+          fetchRandomProduct();
+        }, 1000);
+      }, 1000); // Change the duration (in milliseconds) as needed
     }
   };
 
@@ -67,29 +103,47 @@ export default function Page() {
       ) : (
         <div className="flex flex-col w-full px-64">
           <div className="flex w-full justify-between">
-            <Card product={currentProduct} />
-            <div className="flex items-center">VS</div>
-            <Card product={nextProduct} second={true} />
+            <Card product={products.current} />
+            <div className="flex items-center flex-col justify-between">
+              <h2 className="bg-blue-500 text-xl py-1 px-3 font-semibold text-white rounded-sm">
+                Puntuación: {score}
+              </h2>
+              <div
+                id="vsDiv"
+                className="bg-navbar transition-bg-vs shadow-md font-semibold py-6 px-7"
+              >
+                VS
+              </div>
+              <div></div>
+            </div>
+            <Card product={products.next} second={true} />
           </div>
           <div className="flex w-full justify-center items-center flex-col">
-            <h2>¿El próximo producto tendrá un precio más alto o más bajo?</h2>
+            <h2
+              className="bg-navbar shadow-md my-5"
+              style={{
+                fontSize: '1.5rem',
+                padding: '5px 10px',
+              }}
+            >
+              ¿El producto de la derecha tendrá un precio más alto o más bajo?
+            </h2>
             <div className="flex flex-row">
               <GameButton
                 color="green"
                 name="greenButton"
-                handleGuess={handleGuess}
+                handleGuess={() => handleGuess(true)}
               >
                 Mas Alto
               </GameButton>
               <GameButton
                 color="red"
                 name="redButton"
-                handleGuess={handleGuess}
+                handleGuess={() => handleGuess(false)}
               >
                 Mas Bajo
               </GameButton>
             </div>
-            <h2>Puntuación: {score}</h2>
           </div>
         </div>
       )}
