@@ -26,7 +26,7 @@ const links = [
 
 const Navbar = () => {
   const pathName = usePathname();
-  console.log(pathName);
+
   return (
     <nav className="bg-navbar p-1 text-white shadow-md">
       <div className="container mx-auto flex justify-between items-center">
