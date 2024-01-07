@@ -86,3 +86,19 @@ body {
   color: #ffffff;
   border-radius: 100%;
 }
+
+.pulsating {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #fff;
+  }
+  50% {
+    background-color: #ddd;
+  }
+  100% {
+    background-color: #fff;
+  }
+}
