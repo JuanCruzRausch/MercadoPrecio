@@ -4,14 +4,14 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 234, 234, 234;
+  --background-end-rgb: 234, 234, 234;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 248, 230, 53;
+    --background-start-rgb: 234, 234, 234;
     --background-end-rgb: 234, 234, 234;
   }
 }
@@ -37,4 +37,14 @@ body {
 .footer {
   border-top: 3px solid rgb(248, 230, 53);
   color: rgb(76, 76, 76);
+}
+
+.button-game-green {
+  background-color: rgb(22, 151, 63);
+  border: 2px solid rgb(12, 0, 113);
+}
+
+.button-game-red {
+  background-color: rgb(231, 0, 8);
+  border: 2px solid rgb(12, 0, 113);
 }
