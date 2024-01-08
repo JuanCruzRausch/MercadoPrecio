@@ -25,8 +25,8 @@ export default function Page() {
       try {
         setLoading(true);
         const [response1, response2] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/rand`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/rand`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/product/rand`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/product/rand`),
         ]);
 
         if (!response1.ok || !response2.ok) {
@@ -56,7 +56,7 @@ export default function Page() {
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/product/rand`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/product/rand`,
       );
 
       if (!response.ok) {
