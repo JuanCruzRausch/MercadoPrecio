@@ -1,8 +1,13 @@
 const Product = require('../models/productModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   const products = await Product.find();
+
+  if (!products) {
+    next(new AppError('No product found', 404));
+  }
 
   res.status(200).json({
     status: 'success',
@@ -13,17 +18,17 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getRandomProduct = async (req, res, next) => {
-  try {
-    const product = await Product.aggregate([{ $sample: { size: 1 } }]);
-    res.status(200).json({
-      status: 'success',
-      data: {
-        product,
-      },
-    });
-  } catch (error) {
-    res.status(404).json({});
-    console.log(error);
+exports.getRandomProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.aggregate([{ $sample: { size: 1 } }]);
+
+  if (!product) {
+    next(new AppError('No product found', 404));
   }
-};
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product,
+    },
+  });
+});
