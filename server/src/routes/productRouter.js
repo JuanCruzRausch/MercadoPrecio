@@ -1,9 +1,9 @@
 const express = require('express');
 const productController = require('../controllers/productController');
 
-const productRouter = express.Router();
+const router = express.Router();
 
-productRouter.get('/', productController.getAllProducts);
-productRouter.get('/rand', productController.getRandomProduct);
+router.get('/', productController.getAllProducts);
+router.get('/rand', productController.getRandomProduct);
 
-module.exports = productRouter;
+module.exports = router;
