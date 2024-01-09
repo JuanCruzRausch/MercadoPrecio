@@ -19,16 +19,20 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 });
 
 exports.getRandomProduct = catchAsync(async (req, res, next) => {
-  const product = await Product.aggregate([{ $sample: { size: 1 } }]);
-
-  if (!product) {
-    next(new AppError('No product found', 404));
+  const products = await Product.aggregate([
+    { $set: { random: { $rand: {} } } },
+    { $sort: { random: 1 } },
+  ]);
+  console.log('Restars');
+  if (!products || products.length === 0) {
+    next(new AppError('No products found', 404));
   }
 
   res.status(200).json({
     status: 'success',
+    results: products.length,
     data: {
-      product,
+      products,
     },
   });
 });

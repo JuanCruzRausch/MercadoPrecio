@@ -7,12 +7,13 @@ function Card({ product, second }) {
       className="card border bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col"
       style={{ width: '300px', height: '450px' }}
     >
-      <div className="h-60 flex justify-center items-center">
+      <div className="h-60 relative">
         <Image
           src={product?.imageUrl}
           alt={product?.name}
-          width={200}
-          height={250}
+          layout="fill"
+          objectFit="contain"
+          sizes="(max-width: 640px) 100vw, 300px"
         />
       </div>
       <div className="p-4 flex-grow">
@@ -20,7 +21,7 @@ function Card({ product, second }) {
           OFERTA DEL DÍA
         </span>
         <h2 className="text-2xl my-2 font-semibold mb-2">
-          $ {second ? '?????' : product?.price}
+          $ {second ? '?????' : new Intl.NumberFormat().format(product?.price)}
         </h2>
         <p className="text-green-600">Envío gratis</p>
         <p className="text-gray-600 text-sm">
