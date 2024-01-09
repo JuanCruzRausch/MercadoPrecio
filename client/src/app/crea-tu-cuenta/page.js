@@ -4,16 +4,24 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const setCookie = (name, value, days) => {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = `expires=${date.toUTCString()}`;
+  document.cookie = `${name}=${value};${expires};path=/`;
+};
+
 const page = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: '',
+    surname: '',
     email: '',
     password: '',
     passwordConfirm: '',
+    photo: '/UserIcon.jpeg',
   });
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -22,7 +30,7 @@ const page = () => {
     e.preventDefault();
 
     try {
-      // Realiza una solicitud al backend para registrarse utilizando fetch
+      // Realiza una solicitud al backend para iniciar sesión utilizando fetch
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/signup`,
         {
@@ -40,21 +48,25 @@ const page = () => {
 
       // Verifica si la solicitud fue exitosa y muestra el token
       if (responseData.status === 'success' && responseData.token) {
-        console.log('Registration successful!');
+        console.log('Login successful!');
+
+        // Establece la cookie en el cliente
+        setCookie('jwt', responseData.token, 90); // Aquí '7' es la duración en días
+
         // Redirige a la página deseada, por ejemplo, el dashboard
-        alert('Te has registrado correctamente :)');
+        alert('Has iniciado sesión correctamente :)');
         router.push('/');
       }
     } catch (error) {
-      console.error('Error during registration:', error.message);
-      alert('Ha ocurrido un error a la hora de registrarte');
+      console.error('Error during singuing up:', error.message);
+      alert('Ha ocurrido un error al iniciar sesión');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 shadow-md rounded-md w-full max-w-md">
-        <h1 className="text-2xl font-semibold mb-6">Sign Up</h1>
+        <h1 className="text-2xl text-black font-semibold mb-6">Sign Up</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -67,6 +79,22 @@ const page = () => {
                 id="name"
                 name="name"
                 value={formData.name}
+                onChange={handleChange}
+                className="mt-1 p-2 block w-full rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
+              />
+            </label>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="surname"
+              className="block text-sm font-medium text-gray-600"
+            >
+              Surname:
+              <input
+                type="text"
+                id="surname"
+                name="surname"
+                value={formData.surname}
                 onChange={handleChange}
                 className="mt-1 p-2 block w-full rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
               />

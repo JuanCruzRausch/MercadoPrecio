@@ -12,6 +12,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const productRouter = require('./routes/productRouter');
 const userRouter = require('./routes/userRouter');
+const scoreRouter = require('./routes/scoreRouter');
 
 const app = express();
 
@@ -54,10 +55,21 @@ app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
-app.use(cors());
+
+// Configuración CORS con opciones específicas
+const corsOptions = {
+  origin: process.env.CLIENT_DOMAIN,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+// Aplica la configuración CORS antes de definir rutas
+app.use(cors(corsOptions));
 
 app.use('/api/v1/product', productRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/score', scoreRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
