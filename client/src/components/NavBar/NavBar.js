@@ -43,9 +43,9 @@ const Navbar = () => {
                   href={link.href}
                   className={`${
                     pathName === link.href
-                      ? 'shadow-lg bg-yellow-400 text-white font-bold rounded-lg'
+                      ? 'shadow-lg bg-yellow-200 font-bold rounded-md'
                       : null
-                  } px-2 py-1`}
+                  } px-2 py-1 transition-all`}
                 >
                   {link.name}
                 </Link>
