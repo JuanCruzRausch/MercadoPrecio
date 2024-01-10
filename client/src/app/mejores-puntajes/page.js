@@ -5,33 +5,33 @@ import Image from 'next/image';
 
 function Page() {
   const [scores, setScores] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    getScores();
-  }, []);
+    getScores(itemsPerPage, currentPage);
+  }, [currentPage]);
 
-  const getScores = async () => {
+  const getScores = async (limit, page) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/score?sort=-score`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/score?sort=-score&limit=${limit}&page=${page}`,
       );
 
-      // Modificar los datos antes de establecerlos en el estado
       const formattedScores = response.data.data.scores.map((score, index) => {
         return {
           posicion: index + 1,
-          puntaje: score.score,
-          nombre: `${score.userId.name} ${score.userId.surname}`,
+          puntaje: score?.score,
+          nombre: `${score.userId?.name} ${score.userId?.surname}`,
           fecha: new Date(score.date).toLocaleDateString(),
-          photo: score.userId.photo,
+          photo: score.userId?.photo,
         };
       });
 
       setScores(formattedScores);
-      console.log(formattedScores);
-    } catch (error) {
-      console.log('Error to fetch scores: ', error);
-    }
+      setTotalPages(Math.ceil(response.data.total / itemsPerPage));
+    } catch (error) {}
   };
 
   return (
@@ -65,20 +65,22 @@ function Page() {
                 <td className="py-3 px-4 font-semibold">
                   <div className="flex justify-center items-center">
                     <p className="bg-blue-500 text-xs py-1 px-3 font-semibold text-white rounded-sm">
-                      {score.posicion}°
+                      {score.posicion * currentPage}°
                     </p>
                   </div>
                 </td>
                 <td className="py-3 px-4 ">
                   <div
                     className={`flex justify-center items-center  font-semibold ${
-                      score.posicion === 1
-                        ? 'text-yellow-500 text-3xl'
-                        : score.posicion === 2
-                          ? 'text-gray-400 text-2xl'
-                          : score.posicion === 3
-                            ? ' text-amber-700 text-xl'
-                            : null
+                      currentPage === 1
+                        ? score.posicion === 1
+                          ? 'text-yellow-500 text-3xl'
+                          : score.posicion === 2
+                            ? 'text-gray-400 text-2xl'
+                            : score.posicion === 3
+                              ? ' text-amber-700 text-xl'
+                              : null
+                        : null
                     }`}
                   >
                     {score.puntaje}
@@ -87,35 +89,41 @@ function Page() {
                 <td className="py-3 px-4 ">
                   <div
                     className={`flex justify-center items-center  font-semibold ${
-                      score.posicion === 1
-                        ? 'text-yellow-500 text-3xl'
-                        : score.posicion === 2
-                          ? 'text-gray-400 text-2xl'
-                          : score.posicion === 3
-                            ? ' text-amber-700 text-xl'
-                            : null
+                      currentPage === 1
+                        ? score.posicion === 1
+                          ? 'text-yellow-500 text-3xl'
+                          : score.posicion === 2
+                            ? 'text-gray-400 text-2xl'
+                            : score.posicion === 3
+                              ? ' text-amber-700 text-xl'
+                              : null
+                        : null
                     }`}
                   >
                     <Image
                       src={score.photo}
                       width={
-                        score.posicion === 1
-                          ? 60
-                          : score.posicion === 2
-                            ? 50
-                            : score.posicion === 3
-                              ? 40
-                              : 30
+                        currentPage === 1
+                          ? score.posicion === 1
+                            ? 60
+                            : score.posicion === 2
+                              ? 50
+                              : score.posicion === 3
+                                ? 40
+                                : 30
+                          : 30
                       }
                       height={30}
                       className={`rounded-full mr-2 ${
-                        score.posicion === 1
-                          ? 'border-yellow-500 border-4'
-                          : score.posicion === 2
-                            ? 'border-gray-400 border-2'
-                            : score.posicion === 3
-                              ? ' border-amber-700 border-2'
-                              : null
+                        currentPage === 1
+                          ? score.posicion === 1
+                            ? 'border-yellow-500 border-4'
+                            : score.posicion === 2
+                              ? 'border-gray-400 border-2'
+                              : score.posicion === 3
+                                ? ' border-amber-700 border-2'
+                                : null
+                          : ''
                       }`}
                     />
                     <p>{score.nombre}</p>
@@ -130,6 +138,29 @@ function Page() {
             ))}
           </tbody>
         </table>
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`hover:text-blue-700 text-blue-500 py-2 px-4 mx-1 ${
+              currentPage === 1 ? 'invisible' : null
+            }`}
+          >
+            {'< Anterior'}
+          </button>
+          <span className="flex justify-center items-center mx-2 text-gray-500">
+            Página {currentPage} de {totalPages < 1 ? '1' : totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`hover:text-blue-700 text-blue-500 py-2 px-4 mx-1 ${
+              totalPages <= currentPage ? 'invisible' : null
+            }`}
+          >
+            {'Siguiente >'}
+          </button>
+        </div>
       </div>
     </div>
   );

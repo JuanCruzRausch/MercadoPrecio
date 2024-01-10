@@ -22,7 +22,6 @@ export const fetchUserData = createAsyncThunk(
         );
         return response.data.data.user;
       } else {
-        console.log('La cookie jwt no existe');
         return null;
       }
     } catch (error) {
@@ -37,7 +36,7 @@ export const fetchUserData = createAsyncThunk(
 
 // Definir el estado inicial
 const initialState = {
-  id: '',
+  _id: '',
   name: '',
   surname: '',
   email: '',
@@ -51,7 +50,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearUser: (state) => {
-      state.id = '';
+      state._id = '';
       state.name = '';
       state.surname = '';
       state.email = '';

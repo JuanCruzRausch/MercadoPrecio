@@ -44,7 +44,6 @@ const Navbar = () => {
     dispatch(fetchUserData());
   }, []);
 
-  console.log(user.name);
   const toggleUserSettings = () => {
     setOpenUserSettings(!openUserSettings);
   };
@@ -104,12 +103,14 @@ const Navbar = () => {
                   <Link
                     href="/profile"
                     className="px-4 py-2 cursor-pointer hover:bg-gray-200 transition-all"
+                    onClick={toggleUserSettings}
                   >
                     Mi Perfil
                   </Link>
                   <Link
                     href="/mis-puntajes"
                     className="px-4 py-2 cursor-pointer hover:bg-gray-200 transition-all"
+                    onClick={toggleUserSettings}
                   >
                     Mis Puntajes
                   </Link>
