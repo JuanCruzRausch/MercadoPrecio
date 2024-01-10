@@ -1,8 +1,12 @@
 'use client';
 import Card from '@/components/Card/Card';
 import GameButton from '@/components/GameButton/GameButton';
+import cookieExist from '@/utils/cookieExist';
+import getCookie from '@/utils/getCookie';
+import getUser from '@/utils/getUser';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function Page() {
   const [products, setProducts] = useState([]);
@@ -16,11 +20,25 @@ export default function Page() {
     gifUrl: '',
   });
   const [isClicked, setIsClicked] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState({
+    id: '',
+    name: '',
+    surname: '',
+    email: '',
+    photo: '',
+    role: '',
+  });
 
   useEffect(() => {
     const handleFetchError = (error) => {
       console.error(error.message);
     };
+
+    setIsLoggedIn(cookieExist(document));
+    if (isLoggedIn === true) {
+      getUser(document, process.env.NEXT_PUBLIC_API_URL, setUser);
+    }
 
     const fetchRandomProducts = async () => {
       try {
@@ -131,6 +149,36 @@ export default function Page() {
     }
   };
 
+  const saveScore = async (userScore) => {
+    const jwt = getCookie(document);
+    console.log(jwt);
+    console.log(userScore);
+
+    const axiosInstance = axios.create({
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    try {
+      const response = await axiosInstance.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/score`,
+        {
+          // Aquí puedes incluir los datos que desees enviar en el cuerpo del POST
+          // Por ejemplo, si `score` es un objeto con propiedades como `name`, `userId`, etc.
+          // puedes hacer algo como:
+          score: userScore,
+        },
+      );
+
+      console.log(response.data); // Puedes manejar la respuesta según tus necesidades
+    } catch (error) {
+      console.error(error);
+      // Puedes manejar el error según tus necesidades
+    }
+  };
+
   return (
     <div className="flex text-black flex-col items-center min-h-screen h-full p-8">
       {showGameOver ? (
@@ -163,6 +211,14 @@ export default function Page() {
               >
                 Volver al Menu
               </Link>
+              <div
+                className=" text-white py-5 px-8 border-2 border-white text-xl m-5 rounded-full hover:bg-white hover:text-black transition-all cursor-pointer"
+                onClick={() => {
+                  saveScore(prevScore);
+                }}
+              >
+                Guardar Puntaje
+              </div>
             </div>
           </div>
         </div>

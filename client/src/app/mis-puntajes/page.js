@@ -2,18 +2,33 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
+import getUser from '@/utils/getUser';
+import cookieExist from '@/utils/cookieExist';
 
 function Page() {
   const [scores, setScores] = useState([]);
+  const [user, setUser] = useState({
+    id: '',
+    name: '',
+    surname: '',
+    email: '',
+    photo: '',
+    role: '',
+  });
 
   useEffect(() => {
-    getScores();
+    if (cookieExist(document)) {
+      console.log('ENTER');
+      getUser(document, process.env.NEXT_PUBLIC_API_URL, setUser);
+      console.log(user);
+      getScores();
+    }
   }, []);
 
   const getScores = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/score?sort=-score`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/score/${user.id}?sort=-score`,
       );
 
       // Modificar los datos antes de establecerlos en el estado
@@ -40,9 +55,9 @@ function Page() {
         <table className="bg-white shadow-lg" style={{ width: '60%' }}>
           <thead className="bg-navbar">
             <tr>
-              <th className="py-3 px-4 border-b-2 border-yellow-400 font-normal">
+              {/* <th className="py-3 px-4 border-b-2 border-yellow-400 font-normal">
                 Posición
-              </th>
+              </th> */}
               <th className="py-3 px-4 border-b-2 border-yellow-400 font-normal">
                 Puntaje
               </th>
@@ -62,13 +77,13 @@ function Page() {
                   score.posicion % 2 === 0 ? 'bg-gray-100' : 'bg-yellow-100'
                 }
               >
-                <td className="py-3 px-4 font-semibold">
+                {/* <td className="py-3 px-4 font-semibold">
                   <div className="flex justify-center items-center">
                     <p className="bg-blue-500 text-xs py-1 px-3 font-semibold text-white rounded-sm">
                       {score.posicion}°
                     </p>
                   </div>
-                </td>
+                </td> */}
                 <td className="py-3 px-4 ">
                   <div
                     className={`flex justify-center items-center  font-semibold ${

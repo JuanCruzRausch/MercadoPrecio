@@ -1,3 +1,8 @@
+'use client'; // Agrega la directiva "use client" al principio del archivo
+
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchUserData } from '@/redux/features/userSlice';
 import Image from 'next/image';
 import logo from '../../public/logo.png';
 import logoName from '../../public/logoName.png';
@@ -5,6 +10,13 @@ import HorL from '../../public/higherOrLower.png';
 import Link from 'next/link';
 
 export default function Home() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Cargar la información del usuario al montar el layout
+    dispatch(fetchUserData());
+  }, [dispatch]);
+
   return (
     <div className="relative">
       <div
