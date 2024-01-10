@@ -23,7 +23,7 @@ exports.getRandomProduct = catchAsync(async (req, res, next) => {
     { $set: { random: { $rand: {} } } },
     { $sort: { random: 1 } },
   ]);
-  console.log('Restars');
+
   if (!products || products.length === 0) {
     next(new AppError('No products found', 404));
   }
