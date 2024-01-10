@@ -17,6 +17,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isClicked, setIsClicked] = useState(false);
 
   const [formData, setFormData] = useState({
     name: null,
@@ -88,9 +89,15 @@ const Page = () => {
         }, 2000);
       } else {
         setError('Ha ocurrido un error al registrarse');
+        setTimeout(() => {
+          setIsClicked(false);
+        }, 2000);
       }
     } catch (error) {
       setError('Ha ocurrido un error al registrarse');
+      setTimeout(() => {
+        setIsClicked(false);
+      }, 2000);
     }
   };
 
@@ -207,7 +214,18 @@ const Page = () => {
           <div className="text-center">
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 focus:outline-none"
+              className={`w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 focus:outline-none transition-all ${
+                isClicked
+                  ? 'bg-gray-500 hover:bg-gray-600 cursor-not-allowed'
+                  : null
+              }`}
+              onClick={(e) => {
+                if (!isClicked) {
+                  setIsClicked(true);
+                } else {
+                  e.preventDefault();
+                }
+              }}
             >
               Crear cuenta
             </button>

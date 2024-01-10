@@ -18,6 +18,5 @@ export default async function getUser(document, apiUrl, setUser) {
 
     setUser({ name, email, surname, photo, role, id });
   } else {
-    console.log('La cookie jwt no existe');
   }
 }

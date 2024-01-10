@@ -7,6 +7,7 @@ import getUser from '@/utils/getUser';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,7 @@ export default function Page() {
   const [score, setScore] = useState(0);
   const [prevScore, setPrevScore] = useState(0);
   const [showGameOver, setShowGameOver] = useState(false);
+  const [showProd, setShowProd] = useState(false);
   const [gameOverMessage, setGameOverMessage] = useState({
     message: '',
     message2: '',
@@ -29,6 +31,11 @@ export default function Page() {
     photo: '',
     role: '',
   });
+  const [saveScoreError, setSaveScoreError] = useState(null);
+  const [saveScoreSuccess, setSaveScoreSuccess] = useState(null);
+  const [isClickedSave, setIsClickedSave] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const handleFetchError = (error) => {
@@ -52,6 +59,9 @@ export default function Page() {
 
         const data = await response.json();
         setProducts(data.data.products);
+        setTimeout(() => {
+          setShowProd(true);
+        }, 500);
       } catch (error) {
         handleFetchError(error);
       }
@@ -151,8 +161,6 @@ export default function Page() {
 
   const saveScore = async (userScore) => {
     const jwt = getCookie(document);
-    console.log(jwt);
-    console.log(userScore);
 
     const axiosInstance = axios.create({
       withCredentials: true,
@@ -165,17 +173,21 @@ export default function Page() {
       const response = await axiosInstance.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/score`,
         {
-          // Aquí puedes incluir los datos que desees enviar en el cuerpo del POST
-          // Por ejemplo, si `score` es un objeto con propiedades como `name`, `userId`, etc.
-          // puedes hacer algo como:
           score: userScore,
         },
       );
 
-      console.log(response.data); // Puedes manejar la respuesta según tus necesidades
+      setSaveScoreSuccess('Guardado con éxito');
+
+      setTimeout(() => {
+        router.push('/mis-puntajes');
+      }, 2000);
     } catch (error) {
-      console.error(error);
-      // Puedes manejar el error según tus necesidades
+      setSaveScoreError('Debes estar logueado para subir puntajes');
+
+      setTimeout(() => {
+        router.push('/ingresa');
+      }, 2000);
     }
   };
 
@@ -201,6 +213,8 @@ export default function Page() {
                 className=" text-white py-5 px-8 border-2 border-white text-xl m-5 rounded-full hover:bg-white hover:text-black transition-all cursor-pointer"
                 onClick={() => {
                   setShowGameOver(false);
+                  setSaveScoreError(null);
+                  setSaveScoreSuccess(null);
                 }}
               >
                 Volver a jugar
@@ -212,20 +226,33 @@ export default function Page() {
                 Volver al Menu
               </Link>
               <div
-                className=" text-white py-5 px-8 border-2 border-white text-xl m-5 rounded-full hover:bg-white hover:text-black transition-all cursor-pointer"
+                className={`text-white py-5 px-8 border-2 border-white text-xl m-5 rounded-full hover:bg-white hover:text-black transition-all cursor-pointer ${
+                  isClickedSave ? 'invisible' : null
+                }`}
                 onClick={() => {
+                  setIsClickedSave(true);
                   saveScore(prevScore);
                 }}
               >
                 Guardar Puntaje
               </div>
             </div>
+            {saveScoreError && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mt-4 rounded-full">
+                {saveScoreError}
+              </div>
+            )}
+            {saveScoreSuccess && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 mt-4 rounded-full">
+                {saveScoreSuccess}
+              </div>
+            )}
           </div>
         </div>
       ) : (
         <div className="flex flex-col ">
           <div className="flex w-full justify-between">
-            {products.length > 0 ? (
+            {showProd ? (
               <Card product={products[currentIndex]} />
             ) : (
               <div
@@ -245,7 +272,7 @@ export default function Page() {
               </div>
               <div></div>
             </div>
-            {products.length > 0 ? (
+            {showProd ? (
               <Card
                 product={products[(currentIndex + 1) % products.length]}
                 second={true}
@@ -268,7 +295,7 @@ export default function Page() {
               ¿El producto de la derecha tendrá un precio más alto o más bajo?
             </h2>
             <div
-              className={`flex flex-row ${isClicked ? 'hidden' : ''}`}
+              className={`flex flex-row ${isClicked ? 'invisible' : ''}`}
               onClick={() => handleClick()}
             >
               <GameButton
@@ -286,6 +313,14 @@ export default function Page() {
                 Mas Bajo
               </GameButton>
             </div>
+            {saveScoreError && (
+              <div className="text-red-500 text-lg mt-3">{saveScoreError}</div>
+            )}
+            {saveScoreSuccess && (
+              <div className="text-green-500 text-lg mt-3">
+                {saveScoreSuccess}
+              </div>
+            )}
           </div>
         </div>
       )}

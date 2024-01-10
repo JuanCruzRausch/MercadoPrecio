@@ -34,14 +34,16 @@ exports.getAllScores = catchAsync(async (req, res, next) => {
     .limitFields()
     .paginate();
 
-  // Utiliza populate para incluir la información del usuario relacionado
   const scores = await features.query.populate({
-    path: 'userId', // Nombre del campo que contiene la referencia al usuario
-    select: 'name surname photo', // Puedes especificar los campos que deseas devolver del usuario
+    path: 'userId',
+    select: 'name surname photo',
   });
+
+  const totalScores = await Score.find();
 
   res.status(200).json({
     status: 'success',
+    total: totalScores.length,
     results: scores.length,
     data: {
       scores,
@@ -59,7 +61,10 @@ exports.getUserScores = catchAsync(async (req, res, next) => {
     .limitFields()
     .paginate();
 
-  const scores = await features.query;
+  const scores = await features.query.populate({
+    path: 'userId',
+    select: 'name surname photo',
+  });
 
   if (!scores) {
     return next(
@@ -67,9 +72,11 @@ exports.getUserScores = catchAsync(async (req, res, next) => {
     );
   }
 
-  // Devolver los scores encontrados
+  const totalScores = await Score.find({ userId: req.params.id });
+
   res.status(200).json({
     status: 'success',
+    total: totalScores.length,
     results: scores.length,
     data: {
       scores,
