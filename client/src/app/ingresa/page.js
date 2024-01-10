@@ -1,6 +1,9 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { fetchUserData } from '@/redux/features/userSlice';
 
 const setCookie = (name, value, days) => {
   const date = new Date();
@@ -11,6 +14,9 @@ const setCookie = (name, value, days) => {
 
 const Page = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -24,8 +30,9 @@ const Page = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setError('');
+
     try {
-      // Realiza una solicitud al backend para iniciar sesión utilizando fetch
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/login`,
         {
@@ -37,24 +44,24 @@ const Page = () => {
         },
       );
 
-      // Convierte la respuesta a JSON
       const responseData = await response.json();
-      console.log(responseData);
 
-      // Verifica si la solicitud fue exitosa y muestra el token
       if (responseData.status === 'success' && responseData.token) {
-        console.log('Login successful!');
+        setCookie('jwt', responseData.token, 90);
 
-        // Establece la cookie en el cliente
-        setCookie('jwt', responseData.token, 90); // Aquí '7' es la duración en días
+        await dispatch(fetchUserData());
 
-        // Redirige a la página deseada, por ejemplo, el dashboard
-        alert('Has iniciado sesión correctamente :)');
-        router.push('/');
+        setSuccessMessage('Has iniciado sesión correctamente');
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      } else {
+        setError(
+          responseData.message || 'Ha ocurrido un error al iniciar sesión',
+        );
       }
     } catch (error) {
-      console.error('Error during login:', error.message);
-      alert('Ha ocurrido un error al iniciar sesión');
+      setError('Ha ocurrido un error al iniciar sesión');
     }
   };
 
@@ -102,6 +109,16 @@ const Page = () => {
             >
               Login
             </button>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mt-4 rounded">
+                {error}
+              </div>
+            )}
+            {successMessage && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 mt-4 rounded">
+                {successMessage}
+              </div>
+            )}
           </div>
         </form>
       </div>

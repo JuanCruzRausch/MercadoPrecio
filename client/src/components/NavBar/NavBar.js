@@ -4,10 +4,10 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import logo from '../../../public/logo.png';
 import logoName from '../../../public/logoName.png';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import getCookie from '@/utils/getCookie';
-import cookieExist from '@/utils/cookieExist';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearUser, fetchUserData } from '@/redux/features/userSlice';
+import { useRouter } from 'next/navigation';
 
 const links = [
   {
@@ -33,24 +33,18 @@ const linksNotLoggued = [
 
 const Navbar = () => {
   const pathName = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [user, setUser] = useState({
-    id: '',
-    name: '',
-    surname: '',
-    email: '',
-    photo: '',
-    role: '',
-  });
+  const router = useRouter();
+
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const [openUserSettings, setOpenUserSettings] = useState(false);
 
   useEffect(() => {
-    setIsLoggedIn(cookieExist(document));
-    if (isLoggedIn === true) {
-      getProfile();
-    }
+    dispatch(fetchUserData());
   }, []);
 
+  console.log(user.name);
   const toggleUserSettings = () => {
     setOpenUserSettings(!openUserSettings);
   };
@@ -58,31 +52,9 @@ const Navbar = () => {
   const logout = () => {
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-    setIsLoggedIn(false);
+    dispatch(clearUser());
     setOpenUserSettings(false);
-  };
-
-  const getProfile = async () => {
-    const jwtCookie = getCookie(document);
-
-    if (jwtCookie) {
-      const axiosInstance = axios.create({
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${jwtCookie}`,
-        },
-      });
-
-      const response = await axiosInstance.get(
-        `http://localhost:8080/api/v1/user`,
-      );
-
-      const { name, email, surname, photo, role, id } = response.data.data.user;
-
-      setUser({ name, email, surname, photo, role, id });
-    } else {
-      console.log('La cookie jwt no existe');
-    }
+    router.push('/');
   };
 
   return (
@@ -110,7 +82,7 @@ const Navbar = () => {
               );
             })}
           </>
-          {isLoggedIn ? (
+          {user.name != '' ? (
             <div className="relative">
               <div
                 className={`flex flex-row justify-center items-center px-2 py-1 cursor-pointer ${
@@ -123,16 +95,17 @@ const Navbar = () => {
                   src={user.photo}
                   width={30}
                   height={30}
+                  alt={user.name}
                 />
                 <p>{user.name}</p>
               </div>
               {openUserSettings && (
                 <div className="absolute flex flex-col right-0 bg-white p-2 border-t-2 border-t-yellow-500 rounded-b-md shadow-md z-20">
                   <Link
-                    href="/settings"
+                    href="/profile"
                     className="px-4 py-2 cursor-pointer hover:bg-gray-200 transition-all"
                   >
-                    Settings
+                    Mi Perfil
                   </Link>
                   <Link
                     href="/mis-puntajes"

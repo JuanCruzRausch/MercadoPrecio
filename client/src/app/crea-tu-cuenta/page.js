@@ -1,8 +1,9 @@
-// pages/signup.js
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { fetchUserData } from '@/redux/features/userSlice';
 
 const setCookie = (name, value, days) => {
   const date = new Date();
@@ -11,26 +12,57 @@ const setCookie = (name, value, days) => {
   document.cookie = `${name}=${value};${expires};path=/`;
 };
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
+    name: null,
+    surname: null,
+    email: null,
+    password: null,
+    passwordConfirm: null,
     photo: '/UserIcon.jpeg',
   });
+
+  const profilePhotos = [
+    '1ProfilePhoto.png',
+    '2ProfilePhoto.png',
+    '3ProfilePhoto.png',
+    '4ProfilePhoto.png',
+  ];
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handlePhotoChange = (photo) => {
+    setFormData({ ...formData, photo: `/${photo}` });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setError('');
+
+    if (formData.password !== formData.passwordConfirm) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (
+      (formData.name && formData.name.length > 15) ||
+      (formData.surname && formData.surname.length > 15)
+    ) {
+      setError(
+        'Los campos de nombre y apellido no pueden tener más de 15 caracteres',
+      );
+      return;
+    }
+
     try {
-      // Realiza una solicitud al backend para iniciar sesión utilizando fetch
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/signup`,
         {
@@ -42,38 +74,39 @@ const page = () => {
         },
       );
 
-      // Convierte la respuesta a JSON
       const responseData = await response.json();
-      console.log(responseData);
 
-      // Verifica si la solicitud fue exitosa y muestra el token
       if (responseData.status === 'success' && responseData.token) {
-        console.log('Login successful!');
+        setCookie('jwt', responseData.token, 90);
 
-        // Establece la cookie en el cliente
-        setCookie('jwt', responseData.token, 90); // Aquí '7' es la duración en días
+        await dispatch(fetchUserData());
 
-        // Redirige a la página deseada, por ejemplo, el dashboard
-        alert('Has iniciado sesión correctamente :)');
-        router.push('/');
+        setSuccessMessage('Has registrado tu cuenta correctamente');
+
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      } else {
+        setError('Ha ocurrido un error al registrarse');
       }
     } catch (error) {
-      console.error('Error during singuing up:', error.message);
-      alert('Ha ocurrido un error al iniciar sesión');
+      setError('Ha ocurrido un error al registrarse');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 shadow-md rounded-md w-full max-w-md">
-        <h1 className="text-2xl text-black font-semibold mb-6">Sign Up</h1>
+        <h1 className="text-2xl text-black font-semibold mb-6">
+          Crea tu cuenta
+        </h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-600"
             >
-              Name:
+              Nombre:
               <input
                 type="text"
                 id="name"
@@ -89,7 +122,7 @@ const page = () => {
               htmlFor="surname"
               className="block text-sm font-medium text-gray-600"
             >
-              Surname:
+              Apellido:
               <input
                 type="text"
                 id="surname"
@@ -121,7 +154,7 @@ const page = () => {
               htmlFor="password"
               className="block text-sm font-medium text-gray-600"
             >
-              Password:
+              Contraseña:
               <input
                 type="password"
                 id="password"
@@ -137,7 +170,7 @@ const page = () => {
               htmlFor="passwordConfirm"
               className="block text-sm font-medium text-gray-600"
             >
-              Confirm Password:
+              Confirmar Contraseña:
               <input
                 type="password"
                 id="passwordConfirm"
@@ -148,13 +181,46 @@ const page = () => {
               />
             </label>
           </div>
+          <div className="mb-4">
+            <p className="block text-sm font-medium text-gray-600 mb-2">
+              Elige tu imagen de Perfil:
+            </p>
+            <div className="flex space-x-4">
+              {profilePhotos.map((photo, index) => (
+                <label key={index} className="flex items-center">
+                  <input
+                    type="radio"
+                    name="photo"
+                    value={photo}
+                    onChange={() => handlePhotoChange(photo)}
+                    className="mr-2"
+                  />
+                  <img
+                    src={`/${photo}`}
+                    alt={`Profile ${index + 1}`}
+                    className="w-12 h-12 rounded-full border border-gray-300"
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
           <div className="text-center">
             <button
               type="submit"
               className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 focus:outline-none"
             >
-              Sign Up
+              Crear cuenta
             </button>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mt-4 rounded">
+                {error}
+              </div>
+            )}
+            {successMessage && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 mt-4 rounded">
+                {successMessage}
+              </div>
+            )}
           </div>
         </form>
       </div>
@@ -162,4 +228,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
