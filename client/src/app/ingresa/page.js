@@ -72,7 +72,7 @@ const Page = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 shadow-md rounded-md w-full max-w-md">
-        <h1 className="text-2xl text-black font-semibold mb-6">Login</h1>
+        <h1 className="text-2xl text-black font-semibold mb-6">Ingresá</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -95,7 +95,7 @@ const Page = () => {
               htmlFor="password"
               className="block text-sm font-medium text-gray-600"
             >
-              Password:
+              Contraseña:
               <input
                 type="password"
                 id="password"
@@ -122,7 +122,7 @@ const Page = () => {
                 }
               }}
             >
-              Login
+              Iniciar sesión
             </button>
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mt-4 rounded">
