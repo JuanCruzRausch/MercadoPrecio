@@ -105,7 +105,7 @@ const Page = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 shadow-md rounded-md w-full max-w-md">
         <h1 className="text-2xl text-black font-semibold mb-6">
-          Crea tu cuenta
+          Creá tu cuenta
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
