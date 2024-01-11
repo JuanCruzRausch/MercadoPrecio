@@ -102,28 +102,23 @@ export default function Page() {
         let message2 = '';
         let gifUrl = '';
         if (score === 0) {
-          gifUrl =
-            'https://i.pinimg.com/originals/32/c4/2f/32c42f1cfd2ad0b6978b15c811356b21.gif';
+          gifUrl = '/0Messi.gif';
           message = 'Este puntaje es malo por demas!';
           message2 = 'Ponéle empeño, che...';
         } else if (score === 1) {
-          gifUrl =
-            'https://i.pinimg.com/originals/67/89/8a/67898a4a9b640896e06e0eb6637decfe.gif';
+          gifUrl = '/1Messi.gif';
           message = '🫠 ¿1 punto nomás? 🫠';
           message2 = 'Ponele un poco mas de voluntad la proxima :)';
         } else if (score > 1 && score < 5) {
-          gifUrl =
-            'https://i.pinimg.com/originals/c2/f5/d5/c2f5d5feddb9e95cb071198f7c6f80f3.gif';
+          gifUrl = '/2Messi.gif';
           message = 'Bueno... Nada mal!';
           message2 = 'Lo intentaste aunque sea, peor es... nada?';
         } else if (score >= 5 && score < 10) {
-          gifUrl =
-            'https://i.pinimg.com/originals/5c/92/48/5c92483871c83c469f10b94e3f08b1f5.gif';
+          gifUrl = '/3Messi.gif';
           message = 'Messirve!';
           message2 = 'Buen puntaje (Aunque podría ser mejor)';
         } else if (score >= 10) {
-          gifUrl =
-            'https://i.pinimg.com/originals/fb/f1/6d/fbf16df54626dc47097536dfb899698a.gif';
+          gifUrl = '/4Messi.gif';
           message = 'ufff excelente puntaje che...';
           message2 = "Messi está orgulloso de vos :')";
         }
