@@ -61,7 +61,6 @@ const corsOptions = {
   origin: process.env.CLIENT_DOMAIN,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
-  optionsSuccessStatus: 204,
 };
 
 // Aplica la configuración CORS antes de definir rutas
