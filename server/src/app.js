@@ -58,9 +58,10 @@ app.use((req, res, next) => {
 
 // Configuración CORS con opciones específicas
 const corsOptions = {
-  origin: 'http://localhost:3000/',
+  origin: process.env.CLIENT_DOMAIN,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
+  optionsSuccessStatus: 204,
 };
 
 // Aplica la configuración CORS antes de definir rutas
