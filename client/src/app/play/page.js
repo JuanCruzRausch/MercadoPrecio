@@ -187,7 +187,7 @@ export default function Page() {
   };
 
   return (
-    <div className="flex text-black flex-col items-center min-h-screen h-full p-8">
+    <div className="flex text-black flex-col items-center min-h-screen h-full p-0 xl:p-8 lg:p-8 md:p-8">
       {showGameOver ? (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center overflow-hidden">
           <div
@@ -203,7 +203,7 @@ export default function Page() {
             <p className="text-yellow-500 font-bold text-6xl">{prevScore}</p>
             <p className="text-white mt-6 text-xl">{gameOverMessage.message}</p>
             <p className="text-white text-xl">{gameOverMessage.message2}</p>
-            <div className="flex flex-row justify-center items-center">
+            <div className="flex flex-col justify-center items-center md:flex-row lg:flew-row xl:flex-row">
               <div
                 className=" text-white py-5 px-8 border-2 border-white text-xl m-5 rounded-full hover:bg-white hover:text-black transition-all cursor-pointer"
                 onClick={() => {
@@ -245,23 +245,29 @@ export default function Page() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col ">
-          <div className="flex w-full justify-between">
+        <div className="flex flex-col">
+          <div className="flex w-full flex-col lg:flex-row xl:flex-row md:flex-row">
             {showProd ? (
               <Card product={products[currentIndex]} />
             ) : (
-              <div
-                className="card border pulsating bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col"
-                style={{ width: '300px', height: '450px' }}
-              ></div>
+              <>
+                <div
+                  className="card border pulsating bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col lg:block xl:block md:block hidden"
+                  style={{ width: '300px', height: '450px' }}
+                ></div>
+                <div
+                  className="card border pulsating bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col lg:hidden xl:hidden sm:block md:hidden"
+                  style={{ width: '200px', height: '225px' }}
+                ></div>
+              </>
             )}
             <div className="flex items-center flex-col justify-between">
-              <h2 className="bg-blue-500 text-xl py-1 px-3 font-semibold text-white rounded-sm">
+              <h2 className="bg-blue-500 mb-2 text-sm py-1 px-3 font-semibold text-white rounded-sm md:mb-0 md:text-xl lg:mb-0 lg:text-xl xl:mb-0 xl:text-xl">
                 Puntuación: {score}
               </h2>
               <div
                 id="vsDiv"
-                className="bg-navbar transition-bg-vs shadow-md font-semibold py-6 px-7"
+                className="bg-navbar transition-bg-vs shadow-md font-semibold py-3 px-4 md:py-6 md:px-7 lg:py-6 lg:px-7 xl:py-6 xl:px-7"
               >
                 VS
               </div>
@@ -273,20 +279,21 @@ export default function Page() {
                 second={true}
               />
             ) : (
-              <div
-                className="card pulsating border bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col"
-                style={{ width: '300px', height: '450px' }}
-              ></div>
+              <div className="flex justify-end">
+                <div
+                  className="card border pulsating bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col lg:block xl:block md:block hidden"
+                  style={{ width: '300px', height: '450px' }}
+                ></div>
+                <div
+                  className="card border pulsating bg-white rounded-md overflow-hidden shadow-md m-4 flex flex-col lg:hidden xl:hidden sm:block md:hidden"
+                  style={{ width: '200px', height: '225px' }}
+                ></div>
+              </div>
             )}
           </div>
+
           <div className="flex w-full justify-center items-center flex-col">
-            <h2
-              className="bg-navbar shadow-md my-5"
-              style={{
-                fontSize: '1.5rem',
-                padding: '5px 10px',
-              }}
-            >
+            <h2 className="bg-navbar shadow-md my-5 md:p-2 md:text-2xl lg:p-2 lg:text-2xl xl:p-2 xl:text-2xl">
               ¿El producto de la derecha tendrá un precio más alto o más bajo?
             </h2>
             <div
