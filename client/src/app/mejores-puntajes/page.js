@@ -65,7 +65,7 @@ function Page() {
                 <td className="py-3 px-4 font-semibold">
                   <div className="flex justify-center items-center">
                     <p className="bg-blue-500 text-xs py-1 px-3 font-semibold text-white rounded-sm">
-                      {score.posicion * currentPage}°
+                      {score.posicion + (currentPage - 1) * 10}°
                     </p>
                   </div>
                 </td>

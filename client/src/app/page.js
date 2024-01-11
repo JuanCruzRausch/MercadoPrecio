@@ -22,7 +22,7 @@ export default function Home() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url('https://media.ambito.com/p/5cea00255f158c68d3d421b8ad3a9faf/adjuntos/239/imagenes/036/712/0036712212/1200x675/smart/marcado-libre-1jpg.jpg')`,
+          backgroundImage: `url(/HomeBackGround.webp)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
